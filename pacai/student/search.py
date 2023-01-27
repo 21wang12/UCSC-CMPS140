@@ -1,5 +1,9 @@
 """
 In this file, you will implement generic search algorithms which are called by Pacman agents.
+
+Important note: All of your search functions need to return a list of actions that will lead 
+the agent from the start to the goal. These actions all have to be legal moves (valid directions, 
+no moving through walls).
 """
 
 def depthFirstSearch(problem):

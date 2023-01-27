@@ -1,0 +1,37 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "PROJ1-TEST-Welcom",
+            "type": "python",
+            "request": "launch",
+            "program": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/pacai/bin/pacman.py",
+            "cwd": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/",
+            "env": { "PYTHONPATH": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/"},
+            "args": [
+                "--layout", "testMaze",
+                "--pacman", "GoWestAgent",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "PROJ1-TEST-Search",
+            "type": "python",
+            "request": "launch",
+            "program": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/pacai/bin/pacman.py",
+            "cwd": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/",
+            "env": { "PYTHONPATH": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/"},
+            "args": [
+                "--layout",     "tinyMaze",
+                "--pacman",     "SearchAgent",
+                "--agent-args", "fn=pacai.core.search.search.tinyMazeSearch"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+    ]
+}
