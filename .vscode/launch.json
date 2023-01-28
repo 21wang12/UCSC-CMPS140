@@ -16,7 +16,7 @@
                 "--pacman", "GoWestAgent",
             ],
             "console": "integratedTerminal",
-            "justMyCode": true
+            "justMyCode": true,
         },
         {
             "name": "PROJ1-TEST-Search",
@@ -29,6 +29,21 @@
                 "--layout",     "tinyMaze",
                 "--pacman",     "SearchAgent",
                 "--agent-args", "fn=pacai.core.search.search.tinyMazeSearch"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "PROJ1-Q1",
+            "type": "python",
+            "request": "launch",
+            "program": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/pacai/bin/pacman.py",
+            "cwd": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/",
+            "env": { "PYTHONPATH": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/"},
+            "args": [
+                "--layout",     "tinyMaze",
+                "--pacman",     "SearchAgent",
+                "--agent-args", "fn=pacai.student.search.depthFirstSearch"
             ],
             "console": "integratedTerminal",
             "justMyCode": true
