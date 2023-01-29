@@ -67,6 +67,8 @@ class CornersProblem(SearchProblem):
         for corner in self.corners:
             if not startingGameState.hasFood(*corner):
                 logging.warning('Warning: no food in corner ' + str(corner))
+            
+        self._numExpanded = 0
 
     def actionsCost(self, actions):
         """
@@ -121,6 +123,7 @@ class CornersProblem(SearchProblem):
         ```
         """
         successors = []
+        self._numExpanded = self._numExpanded + 1
         for action in Directions.CARDINAL:
             position, unVisitedCorners = state
             x, y = position
@@ -143,11 +146,6 @@ def cornersHeuristic(state, problem):
     i.e. it should be admissible.
     (You need not worry about consistency for this heuristic to receive full credit.)
     """
-
-    # Useful information.
-    corners = problem.corners  # These are the corner coordinates
-    walls = problem.walls  # These are the walls of the maze, as a Grid.
-
     position, unVisitedCorners = state
     heuristicValue = 0
     for corner in unVisitedCorners:
