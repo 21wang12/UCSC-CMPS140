@@ -81,14 +81,60 @@ def uniformCostSearch(problem):
     """
     Search the node of least total cost first.
     """
-
-    # *** Your Code Here ***
-    raise NotImplementedError()
+    start = (problem.startingState(), None, 0)
+    if problem.isGoal(start[0]):
+        return []
+    frontier = PriorityQueue()
+    frontier.push(start, start[2])
+    visited = set()
+    memory = dict()
+    cost = dict()
+    cost[start] = start[2]
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        visited.add(node[0])
+        for neighbor in problem.successorStates(node[0]):
+            if neighbor[0] not in visited:
+                memory[neighbor] = node
+                cost[neighbor] = cost[node] + neighbor[2]
+                if problem.isGoal(neighbor[0]):
+                    path = []
+                    # constrcut the path
+                    parent = neighbor
+                    while parent[0] != start[0]:
+                        path.append(parent[1])
+                        parent = memory[parent]
+                    return list(reversed(path))
+                frontier.push(neighbor, cost[neighbor])
+    return []
 
 def aStarSearch(problem, heuristic):
     """
     Search the node that has the lowest combined cost and heuristic first.
     """
-
-    # *** Your Code Here ***
-    raise NotImplementedError()
+    start = (problem.startingState(), None, 0)
+    if problem.isGoal(start[0]):
+        return []
+    frontier = PriorityQueue()
+    frontier.push(start, start[2] + heuristic(start[0], problem))
+    visited = set()
+    memory = dict()
+    cost = dict()
+    cost[start] = start[2]
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        visited.add(node[0])
+        for neighbor in problem.successorStates(node[0]):
+            if neighbor[0] not in visited:
+                memory[neighbor] = node
+                cost[neighbor] = cost[node] + neighbor[2]
+                if problem.isGoal(neighbor[0]):
+                    path = []
+                    # constrcut the path
+                    parent = neighbor
+                    while parent[0] != start[0]:
+                        path.append(parent[1])
+                        parent = memory[parent]
+                    return list(reversed(path))
+                frontier.push(neighbor, cost[neighbor] + heuristic(neighbor[0], problem))
+    return []
