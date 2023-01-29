@@ -145,11 +145,14 @@ def cornersHeuristic(state, problem):
     """
 
     # Useful information.
-    # corners = problem.corners  # These are the corner coordinates
-    # walls = problem.walls  # These are the walls of the maze, as a Grid.
+    corners = problem.corners  # These are the corner coordinates
+    walls = problem.walls  # These are the walls of the maze, as a Grid.
 
-    # *** Your Code Here ***
-    return heuristic.null(state, problem)  # Default to trivial solution
+    position, unVisitedCorners = state
+    heuristicValue = 0
+    for corner in unVisitedCorners:
+        heuristicValue += manhattan(position, corner)
+    return heuristicValue  # Default to trivial solution
 
 def foodHeuristic(state, problem):
     """
