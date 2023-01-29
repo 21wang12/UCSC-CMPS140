@@ -71,13 +71,14 @@ If you accidentally already created a pacman fork, then you can just cd into the
 Next, we will change the cloned repository's remote url to point to our new repository.
 You can do this via the `git remote set-url` command:
 ```
-git remote set-url origin https://github.com/eriq-augustine/cool-pacman.git
+git remote rename origin old-origin
+git remote add origin git@github.com:21wang12/UCSC-CMPS140.git
 ```
 Or, you can just directly edit the `.git/config` file (the url under `[remote "origin"]`).
 
 Finally, you just need to push to your new repository:
 ```
-git push
+git push -u origin --all
 ```
 
 You're all set!
@@ -88,7 +89,9 @@ You now have a private copy of this pacman repo.
 Occasionally, you may need to pull changes/fixes from this repository.
 Doing so is super easy.
 Just do a `git pull` command and specify this repository as an argument:
-```
+```bash
+git pull old-origin
+# or
 git pull https://github.com/linqs/pacman.git
 ```
 
