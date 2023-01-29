@@ -7,12 +7,17 @@ Good luck and happy searching!
 
 import logging
 
+from pacai.agents.base import BaseAgent
+from pacai.agents.search.base import SearchAgent
 from pacai.core.actions import Actions
+from pacai.core.directions import Directions
 from pacai.core.search import heuristic
 from pacai.core.search.position import PositionSearchProblem
 from pacai.core.search.problem import SearchProblem
-from pacai.agents.base import BaseAgent
-from pacai.agents.search.base import SearchAgent
+
+from pacai.core.distance import manhattan
+import pacai.core.search.search as search
+
 
 class CornersProblem(SearchProblem):
     """
@@ -63,9 +68,6 @@ class CornersProblem(SearchProblem):
             if not startingGameState.hasFood(*corner):
                 logging.warning('Warning: no food in corner ' + str(corner))
 
-        # *** Your Code Here ***
-        raise NotImplementedError()
-
     def actionsCost(self, actions):
         """
         Returns the cost of a particular sequence of actions.
@@ -85,6 +87,53 @@ class CornersProblem(SearchProblem):
 
         return len(actions)
 
+    def isGoal(self, statae):
+        """
+        Returns whether this search state is a goal state of the problem.
+        """
+        position, unVisitedCorners = statae
+        return len(unVisitedCorners) == 0
+    
+    def startingState(self):
+        """
+        Returns the start state (in your search space,
+        NOT a `pacai.core.gamestate.AbstractGameState`).
+        """
+        unVisitedCorners = tuple([corner for corner in self.corners if corner != self.startingPosition])
+        return (self.startingPosition, unVisitedCorners)
+    
+    def successorStates(self, state):
+        """
+        Returns successor states, the actions they require, and a cost of 1.
+        The following code snippet may prove useful:
+        ```
+            successors = []
+            for action in Directions.CARDINAL:
+                x, y = currentPosition
+                dx, dy = Actions.directionToVector(action)
+                nextx, nexty = int(x + dx), int(y + dy)
+                hitsWall = self.walls[nextx][nexty]
+
+                if (not hitsWall):
+                    # Construct the successor.
+
+            return successors
+        ```
+        """
+        successors = []
+        for action in Directions.CARDINAL:
+            position, unVisitedCorners = state
+            x, y = position
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]
+            
+            if (not hitsWall):
+                nextPosition = (nextx, nexty)
+                nextUnVisitedCorners = tuple([corner for corner in unVisitedCorners if corner != nextPosition])
+                successors.append(((nextPosition, nextUnVisitedCorners), action, 1))
+        return successors
+    
 def cornersHeuristic(state, problem):
     """
     A heuristic for the CornersProblem that you defined.
@@ -130,11 +179,30 @@ def foodHeuristic(state, problem):
     ```
     Subsequent calls to this heuristic can access problem.heuristicInfo['wallCount'].
     """
+    def mazeDistance(gameState, point1, point2) -> int:
+        """
+        Returns the maze distance between any two points, using the search functions
+        you have already built. The gameState can be any game state -- Pacman's
+        position in that state is ignored.
 
+        Example usage: mazeDistance((2,4), (5,6), gameState)
+
+        This might be a useful helper function for your ApproximateSearchAgent.
+        """
+        x1, y1 = point1
+        x2, y2 = point2
+        walls = gameState.getWalls()
+        assert not walls[x1][y1], 'point1 is a wall: ' + str(point1)
+        assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
+        prob = PositionSearchProblem(gameState, start=point1, goal=point2)
+        return len(search.bfs(prob))
     position, foodGrid = state
-
-    # *** Your Code Here ***
-    return heuristic.null(state, problem)  # Default to the null heuristic.
+    
+    value = 0
+    foods = foodGrid.asList()
+    for food in foods:
+        value = max(value, mazeDistance(problem.startingGameState, food, position))
+    return value
 
 class ClosestDotSearchAgent(SearchAgent):
     """
