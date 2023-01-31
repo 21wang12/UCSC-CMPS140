@@ -218,15 +218,8 @@ class ClosestDotSearchAgent(SearchAgent):
         """
         Returns a path (a list of actions) to the closest dot, starting from gameState.
         """
-
-        # Here are some useful elements of the startState
-        # startPosition = gameState.getPacmanPosition()
-        # food = gameState.getFood()
-        # walls = gameState.getWalls()
-        # problem = AnyFoodSearchProblem(gameState)
-
-        # *** Your Code Here ***
-        raise NotImplementedError()
+        problem = AnyFoodSearchProblem(gameState)
+        return search.bfs(problem)
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -254,7 +247,10 @@ class AnyFoodSearchProblem(PositionSearchProblem):
 
         # Store the food for later reference.
         self.food = gameState.getFood()
-
+    
+    def isGoal(self, state):
+        return self.food[state[0]][state[1]]
+    
 class ApproximateSearchAgent(BaseAgent):
     """
     Implement your contest entry here.
