@@ -10,6 +10,7 @@ from pacai.util.stack import Stack
 from pacai.util.priorityQueue import PriorityQueue
 from pacai.util.queue import Queue
 
+
 def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first [p 85].
@@ -25,65 +26,65 @@ def depthFirstSearch(problem):
     print("Start's successors: %s" % (problem.successorStates(problem.startingState())))
     ```
     """
-    start = (problem.startingState(), None, 0)
-    if problem.isGoal(start[0]):
-        return []
+    start = (problem.startingState(), None, 0) # ((x, y), action, cost)
     frontier = Stack()
     frontier.push(start)
     visited = set()
     memory = dict()
     while not frontier.isEmpty():
         node = frontier.pop()
-        visited.add(node[0])
-        for neighbor in problem.successorStates(node[0]):
-            if neighbor[0] not in visited:
-                memory[neighbor] = node
-                if problem.isGoal(neighbor[0]):
-                    path = []
-                    # constrcut the path
-                    parent = neighbor
-                    while parent[0] != start[0]:
-                        path.append(parent[1])
-                        parent = memory[parent]
-                    return list(reversed(path))
-                frontier.push(neighbor)
+        
+        if problem.isGoal(node[0]):
+            path = []
+            # constrcut the path
+            parent = node
+            while parent[0] != start[0]:
+                path.append(parent[1])
+                parent = memory[parent]
+            return list(reversed(path))
+        
+        if node[0] not in visited:
+            visited.add(node[0])
+            for neighbor in problem.successorStates(node[0]):
+                if neighbor[0] not in visited:
+                    memory[neighbor] = node
+                    frontier.push(neighbor)
     return []
 
 def breadthFirstSearch(problem):
     """
     Search the shallowest nodes in the search tree first. [p 81]
     """
-    start = (problem.startingState(), None, 0)
-    if problem.isGoal(start[0]):
-        return []
+    start = (problem.startingState(), None, 0) # ((x, y), action, cost)
     frontier = Queue()
     frontier.push(start)
     visited = set()
     memory = dict()
     while not frontier.isEmpty():
         node = frontier.pop()
-        visited.add(node[0])
-        for neighbor in problem.successorStates(node[0]):
-            if neighbor[0] not in visited:
-                memory[neighbor] = node
-                if problem.isGoal(neighbor[0]):
-                    path = []
-                    # constrcut the path
-                    parent = neighbor
-                    while parent[0] != start[0]:
-                        path.append(parent[1])
-                        parent = memory[parent]
-                    return list(reversed(path))
-                frontier.push(neighbor)
+        
+        if problem.isGoal(node[0]):
+            path = []
+            # constrcut the path
+            parent = node
+            while parent[0] != start[0]:
+                path.append(parent[1])
+                parent = memory[parent]
+            return list(reversed(path))
+        
+        if node[0] not in visited:
+            visited.add(node[0])
+            for neighbor in problem.successorStates(node[0]):
+                if neighbor[0] not in visited:
+                    memory[neighbor] = node
+                    frontier.push(neighbor)
     return []
 
 def uniformCostSearch(problem):
     """
     Search the node of least total cost first.
     """
-    start = (problem.startingState(), None, 0)
-    if problem.isGoal(start[0]):
-        return []
+    start = (problem.startingState(), None, 0) # ((x, y), action, cost)
     frontier = PriorityQueue()
     frontier.push(start, start[2])
     visited = set()
@@ -92,69 +93,66 @@ def uniformCostSearch(problem):
     cost[start] = start[2]
     while not frontier.isEmpty():
         node = frontier.pop()
-        visited.add(node[0])
-        for neighbor in problem.successorStates(node[0]):
-            if neighbor[0] not in visited:
-                memory[neighbor] = node
-                cost[neighbor] = cost[node] + neighbor[2]
-                if problem.isGoal(neighbor[0]):
-                    path = []
-                    # constrcut the path
-                    parent = neighbor
-                    while parent[0] != start[0]:
-                        path.append(parent[1])
-                        parent = memory[parent]
-                    return list(reversed(path))
-                frontier.push(neighbor, cost[neighbor])
+        
+        if problem.isGoal(node[0]):
+            path = []
+            # constrcut the path
+            parent = node
+            while parent[0] != start[0]:
+                path.append(parent[1])
+                parent = memory[parent]
+            return list(reversed(path))
+        
+        if node[0] not in visited:
+            visited.add(node[0])
+            for neighbor in problem.successorStates(node[0]):
+                if neighbor[0] not in visited:
+                    memory[neighbor] = node
+                    cost[neighbor] = neighbor[2] + cost[node]
+                    frontier.push(neighbor, cost[neighbor])
     return []
-
-# def aStarSearch(problem, heuristic):
-#     """
-#     Search the node that has the lowest combined cost and heuristic first.
-#     """
-#     start = (problem.startingState(), None, 0)
-#     if problem.isGoal(start[0]):
-#         return []
-#     frontier = PriorityQueue()
-#     frontier.push(start, start[2] + heuristic(start[0], problem))
-#     visited = set()
-#     memory = dict()
-#     cost = dict()
-#     cost[start] = start[2]
-#     while not frontier.isEmpty():
-#         node = frontier.pop()
-#         visited.add(node[0])
-#         for neighbor in problem.successorStates(node[0]):
-#             if neighbor[0] not in visited:
-#                 memory[neighbor] = node
-#                 cost[neighbor] = cost[node] + neighbor[2]
-#                 if problem.isGoal(neighbor[0]):
-#                     path = []
-#                     # constrcut the path
-#                     parent = neighbor
-#                     while parent[0] != start[0]:
-#                         path.append(parent[1])
-#                         parent = memory[parent]
-#                     return list(reversed(path))
-#                 frontier.push(neighbor, cost[neighbor] + heuristic(neighbor[0], problem))
-#     return []
 
 def aStarSearch(problem, heuristic):
+    """
+    Search the node that has the lowest combined cost and heuristic first.
+    """
+    start = (problem.startingState(), None, 0) # ((x, y), action, cost)
     frontier = PriorityQueue()
+    frontier.push(start, start[2] + heuristic(start[0], problem))
     visited = set()
-
-    frontier.push((problem.startingState(), [], 0), 0)
-
+    memory = dict()
+    cost = dict()
+    cost[start] = start[2]
     while not frontier.isEmpty():
-        node, path, priority = frontier.pop()
+        node = frontier.pop()
         
-        if problem.isGoal(node):
-            return path
-
-        if node not in visited:
-            visited.add(node)
-            for successor in problem.successorStates(node):
-                frontier.push((successor[0], path + [successor[1]], successor[2] + priority),\
-                    successor[2] + priority + heuristic(successor[0], problem))
-
+        if problem.isGoal(node[0]):
+            path = []
+            # constrcut the path
+            parent = node
+            while parent[0] != start[0]:
+                path.append(parent[1])
+                parent = memory[parent]
+            return list(reversed(path))
+        
+        if node[0] not in visited:
+            visited.add(node[0])
+            for neighbor in problem.successorStates(node[0]):
+                if neighbor[0] not in visited:
+                    memory[neighbor] = node
+                    cost[neighbor] = neighbor[2] + cost[node]
+                    frontier.push(neighbor, cost[neighbor] + heuristic(neighbor[0], problem))
     return []
+
+#cited pesudocode
+# def dfs_stack(graph, start):
+#     visited = set()
+#     stack = [start]
+#     while stack:
+#         vertex = stack.pop()
+#         if vertex not in visited:
+#             print(vertex)
+#             visited.add(vertex)
+#             for neighbor in graph[vertex]:
+#                 if neighbor not in visited:
+#                     stack.append(neighbor)

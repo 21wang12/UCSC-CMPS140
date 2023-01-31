@@ -7,13 +7,13 @@ Good luck and happy searching!
 
 import logging
 
-from pacai.agents.base import BaseAgent
-from pacai.agents.search.base import SearchAgent
 from pacai.core.actions import Actions
 from pacai.core.directions import Directions
 from pacai.core.search import heuristic
 from pacai.core.search.position import PositionSearchProblem
 from pacai.core.search.problem import SearchProblem
+from pacai.agents.base import BaseAgent
+from pacai.agents.search.base import SearchAgent
 
 from pacai.core.distance import manhattan
 import pacai.core.search.search as search
@@ -107,20 +107,6 @@ class CornersProblem(SearchProblem):
     def successorStates(self, state):
         """
         Returns successor states, the actions they require, and a cost of 1.
-        The following code snippet may prove useful:
-        ```
-            successors = []
-            for action in Directions.CARDINAL:
-                x, y = currentPosition
-                dx, dy = Actions.directionToVector(action)
-                nextx, nexty = int(x + dx), int(y + dy)
-                hitsWall = self.walls[nextx][nexty]
-
-                if (not hitsWall):
-                    # Construct the successor.
-
-            return successors
-        ```
         """
         successors = []
         self._numExpanded = self._numExpanded + 1
@@ -148,8 +134,8 @@ def cornersHeuristic(state, problem):
     """
     position, unVisitedCorners = state
     heuristicValue = 0
-    for corner in unVisitedCorners:
-        heuristicValue += manhattan(position, corner)
+    for unVisitedCorner in unVisitedCorners:
+        heuristicValue += manhattan(position, unVisitedCorner)
     return heuristicValue  # Default to trivial solution
 
 def foodHeuristic(state, problem):
@@ -190,11 +176,6 @@ def foodHeuristic(state, problem):
 
         This might be a useful helper function for your ApproximateSearchAgent.
         """
-        x1, y1 = point1
-        x2, y2 = point2
-        walls = gameState.getWalls()
-        assert not walls[x1][y1], 'point1 is a wall: ' + str(point1)
-        assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
         prob = PositionSearchProblem(gameState, start=point1, goal=point2)
         return len(search.bfs(prob))
     position, foodGrid = state
