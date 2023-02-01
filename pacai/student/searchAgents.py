@@ -9,13 +9,13 @@ import logging
 
 from pacai.core.actions import Actions
 from pacai.core.directions import Directions
-from pacai.core.search import heuristic
 from pacai.core.search.position import PositionSearchProblem
 from pacai.core.search.problem import SearchProblem
 from pacai.agents.base import BaseAgent
 from pacai.agents.search.base import SearchAgent
 
 from pacai.core.distance import manhattan
+from pacai.core.distance import maze
 import pacai.core.search.search as search
 
 
@@ -67,7 +67,6 @@ class CornersProblem(SearchProblem):
         for corner in self.corners:
             if not startingGameState.hasFood(*corner):
                 logging.warning('Warning: no food in corner ' + str(corner))
-            
         self._numExpanded = 0
 
     def actionsCost(self, actions):
@@ -89,21 +88,22 @@ class CornersProblem(SearchProblem):
 
         return len(actions)
 
-    def isGoal(self, statae):
+    def isGoal(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        position, unVisitedCorners = statae
+        position, unVisitedCorners = state
         return len(unVisitedCorners) == 0
-    
+
     def startingState(self):
         """
         Returns the start state (in your search space,
         NOT a `pacai.core.gamestate.AbstractGameState`).
         """
-        unVisitedCorners = tuple([corner for corner in self.corners if corner != self.startingPosition])
+        unVisitedCorners = tuple([corner for corner in self.corners
+                                  if corner != self.startingPosition])
         return (self.startingPosition, unVisitedCorners)
-    
+
     def successorStates(self, state):
         """
         Returns successor states, the actions they require, and a cost of 1.
@@ -116,13 +116,13 @@ class CornersProblem(SearchProblem):
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             hitsWall = self.walls[nextx][nexty]
-            
             if (not hitsWall):
                 nextPosition = (nextx, nexty)
-                nextUnVisitedCorners = tuple([corner for corner in unVisitedCorners if corner != nextPosition])
+                nextUnVisitedCorners = tuple([corner for corner in unVisitedCorners
+                                              if corner != nextPosition])
                 successors.append(((nextPosition, nextUnVisitedCorners), action, 1))
         return successors
-    
+
 def cornersHeuristic(state, problem):
     """
     A heuristic for the CornersProblem that you defined.
@@ -166,24 +166,12 @@ def foodHeuristic(state, problem):
     ```
     Subsequent calls to this heuristic can access problem.heuristicInfo['wallCount'].
     """
-    def mazeDistance(gameState, point1, point2) -> int:
-        """
-        Returns the maze distance between any two points, using the search functions
-        you have already built. The gameState can be any game state -- Pacman's
-        position in that state is ignored.
 
-        Example usage: mazeDistance((2,4), (5,6), gameState)
-
-        This might be a useful helper function for your ApproximateSearchAgent.
-        """
-        prob = PositionSearchProblem(gameState, start=point1, goal=point2)
-        return len(search.bfs(prob))
     position, foodGrid = state
-    
     value = 0
     foods = foodGrid.asList()
     for food in foods:
-        value = max(value, mazeDistance(problem.startingGameState, food, position))
+        value += maze(food, position, problem.startingGameState)
     return value
 
 class ClosestDotSearchAgent(SearchAgent):
@@ -247,10 +235,10 @@ class AnyFoodSearchProblem(PositionSearchProblem):
 
         # Store the food for later reference.
         self.food = gameState.getFood()
-    
+
     def isGoal(self, state):
         return self.food[state[0]][state[1]]
-    
+
 class ApproximateSearchAgent(BaseAgent):
     """
     Implement your contest entry here.
