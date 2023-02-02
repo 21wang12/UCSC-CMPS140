@@ -135,7 +135,7 @@ def cornersHeuristic(state, problem):
     position, unVisitedCorners = state
     heuristicValue = 0
     for unVisitedCorner in unVisitedCorners:
-        heuristicValue += manhattan(position, unVisitedCorner)
+        heuristicValue = max(heuristicValue, manhattan(position, unVisitedCorner))
     return heuristicValue  # Default to trivial solution
 
 def foodHeuristic(state, problem):
@@ -171,7 +171,8 @@ def foodHeuristic(state, problem):
     value = 0
     foods = foodGrid.asList()
     for food in foods:
-        value += maze(food, position, problem.startingGameState)
+        # value = max(value, manhattan(position, food))
+        value = max(value, maze(food, position, problem.startingGameState))
     return value
 
 class ClosestDotSearchAgent(SearchAgent):

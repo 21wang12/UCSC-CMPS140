@@ -38,10 +38,10 @@ def depthFirstSearch(problem):
                 if neighbor[0] not in visited:
                     memory[neighbor] = node
                     frontier.push(neighbor)
-                if problem.isGoal(node[0]):
+                if problem.isGoal(neighbor[0]):
                     path = []
                     # constrcut the path by memory
-                    parent = node
+                    parent = neighbor
                     while parent[0] != start[0]:
                         path.append(parent[1])
                         parent = memory[parent]
@@ -65,10 +65,10 @@ def breadthFirstSearch(problem):
                 if neighbor[0] not in visited:
                     memory[neighbor] = node
                     frontier.push(neighbor)
-                if problem.isGoal(node[0]):
+                if problem.isGoal(neighbor[0]):
                     path = []
                     # constrcut the path
-                    parent = node
+                    parent = neighbor
                     while parent[0] != start[0]:
                         path.append(parent[1])
                         parent = memory[parent]
@@ -95,10 +95,10 @@ def uniformCostSearch(problem):
                     memory[neighbor] = node
                     cost[neighbor] = neighbor[2] + cost[node]
                     frontier.push(neighbor, cost[neighbor])
-                if problem.isGoal(node[0]):
+                if problem.isGoal(neighbor[0]):
                     path = []
                     # constrcut the path
-                    parent = node
+                    parent = neighbor
                     while parent[0] != start[0]:
                         path.append(parent[1])
                         parent = memory[parent]
