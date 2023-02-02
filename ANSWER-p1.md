@@ -243,6 +243,7 @@ def cornersHeuristic(state, problem):
     position, unVisitedCorners = state
     heuristicValue = 0
     for unVisitedCorner in unVisitedCorners:
+        # from pacai.core.distance import manhattan 
         heuristicValue = max(heuristicValue, manhattan(position, unVisitedCorner))
     return heuristicValue  # Default to trivial solution
 ```
@@ -266,7 +267,7 @@ def foodHeuristic(state, problem):
     value = 0
     foods = foodGrid.asList()
     for food in foods:
-        # value = max(value, manhattan(position, food))
+        # from pacai.core.distance import maze
         value = max(value, maze(food, position, problem.startingGameState))
     return value
 ```
