@@ -1,5 +1,7 @@
 # Project 1: Search in Pac-Man
 
+Congrats! Get full credit in this project with the answer below.
+
 # Question 1
 
 Implement the depth-first search (DFS) algorithm in `pacai.student.search.depthFirstSearch`. To make your algorithm complete, write the graph search version of DFS, which avoids expanding any already visited states (textbook section 3.5).
