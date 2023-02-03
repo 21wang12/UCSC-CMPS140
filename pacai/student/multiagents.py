@@ -3,6 +3,8 @@ import random
 from pacai.agents.base import BaseAgent
 from pacai.agents.search.multiagent import MultiAgentSearchAgent
 
+from pacai.core.distance import manhattan, maze
+
 class ReflexAgent(BaseAgent):
     """
     A reflex agent chooses an action at each choice point by examining
@@ -47,18 +49,33 @@ class ReflexAgent(BaseAgent):
         Make sure to understand the range of different values before you combine them
         in your evaluation function.
         """
-
+        
         successorGameState = currentGameState.generatePacmanSuccessor(action)
-
         # Useful information you can extract.
         # newPosition = successorGameState.getPacmanPosition()
-        # oldFood = currentGameState.getFood()
-        # newGhostStates = successorGameState.getGhostStates()
+        newFoods = successorGameState.getFood()
+        newGhostStates = successorGameState.getGhostStates()
         # newScaredTimes = [ghostState.getScaredTimer() for ghostState in newGhostStates]
 
         # *** Your Code Here ***
-
-        return successorGameState.getScore()
+        pacmanPosition = successorGameState.getPacmanPosition()
+        dist2ClosestFood = 1e9
+        newFoods = newFoods.asList()
+        if pacmanPosition in newFoods: 
+            newFoods = list(filter(lambda x: x != pacmanPosition, newFoods))
+        for food in newFoods:
+            # dist2ClosestFood = min(dist2ClosestFood, manhattan(food, pacmanPosition))
+            dist2ClosestFood = min(dist2ClosestFood, maze(food, pacmanPosition, successorGameState))
+        dist2ClosestGhost = 1e9
+        SAFE_DISTANCE = 2
+        for ghost in newGhostStates:
+            if ghost.isBraveGhost() or ghost._scaredTimer * 2 < SAFE_DISTANCE:
+                dist2ClosestGhost = min(dist2ClosestGhost, manhattan(ghost.getPosition(), pacmanPosition))
+        if dist2ClosestGhost < SAFE_DISTANCE:
+            dist2ClosestGhost = -1e9
+        else:
+            dist2ClosestGhost = 1e9
+        return successorGameState.getScore() + (1.0 / dist2ClosestFood) + dist2ClosestGhost
 
 class MinimaxAgent(MultiAgentSearchAgent):
     """
@@ -89,6 +106,34 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
     def __init__(self, index, **kwargs):
         super().__init__(index, **kwargs)
+
+    def getAction(self, state):
+        """
+        Receive an `pacai.core.gamestate.AbstractGameState`.
+        Return an action from `pacai.core.directions.Directions`.
+        """
+        ghosts = [i for i in range(1, state.getNumAgents())]  # pacman index is 0, other is ghost
+        legalMoves = state.getLegalActions()
+        bestScore = -1e9
+        bestAction = None
+        for action in legalMoves:
+            successorState = state.generatePacmanSuccessor(action)
+            score = self.minimax(successorState, 0, self.getEvaluationFunction(), True)
+            if score > bestScore:
+                bestScore = score
+                bestAction = action
+        return bestAction
+    
+    def minimax(self, state, depth, payoffFunction, isMaximizing):
+        if state.isWin() or state.isLose() or depth == self.getTreeDepth():
+            return payoffFunction(state)
+        
+        if isMaximizing:
+            pass
+        else:
+            pass
+        return payoffFunction(state) 
+
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """

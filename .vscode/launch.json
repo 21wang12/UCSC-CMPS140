@@ -134,5 +134,20 @@
             "console": "integratedTerminal",
             "justMyCode": true
         },
+        {
+            "name": "PROJ2-Q2-Reflex",
+            "type": "python",
+            "request": "launch",
+            "program": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/pacai/bin/pacman.py",
+            "cwd": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/",
+            "env": { "PYTHONPATH": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/"},
+            "args": [
+                "--pacman",     "MinimaxAgent",
+                "--layout",     "trappedClassic",
+                "--agent-args",  "depth=3",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
     ]
 }
