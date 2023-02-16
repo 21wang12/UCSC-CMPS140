@@ -135,7 +135,7 @@
             "justMyCode": true
         },
         {
-            "name": "PROJ2-Q2-Reflex",
+            "name": "PROJ2-Q2-Minimax",
             "type": "python",
             "request": "launch",
             "program": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/pacai/bin/pacman.py",
@@ -143,8 +143,23 @@
             "env": { "PYTHONPATH": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/"},
             "args": [
                 "--pacman",     "MinimaxAgent",
-                "--layout",     "trappedClassic",
-                "--agent-args",  "depth=3",
+                "--layout",     "minimaxClassic",
+                "--agent-args",  "depth=4",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "PROJ2-Q5-Evaluation",
+            "type": "python",
+            "request": "launch",
+            "program": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/pacai/bin/pacman.py",
+            "cwd": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/",
+            "env": { "PYTHONPATH": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/"},
+            "args": [
+                "--pacman",     "ExpectimaxAgent",
+                "--layout",     "smallClassic",
+                "--agent-args",  "evalFn=pacai.student.multiagents.betterEvaluationFunction",
             ],
             "console": "integratedTerminal",
             "justMyCode": true

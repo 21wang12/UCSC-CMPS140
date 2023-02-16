@@ -112,27 +112,51 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Receive an `pacai.core.gamestate.AbstractGameState`.
         Return an action from `pacai.core.directions.Directions`.
         """
-        ghosts = [i for i in range(1, state.getNumAgents())]  # pacman index is 0, other is ghost
-        legalMoves = state.getLegalActions()
+        legalMoves = state.getLegalActions(0)  # PACMAN_AGENT_INDEX = 0
         bestScore = -1e9
         bestAction = None
+        
         for action in legalMoves:
             successorState = state.generatePacmanSuccessor(action)
-            score = self.minimax(successorState, 0, self.getEvaluationFunction(), True)
+            score = self.minimax(successorState, 1, self.getEvaluationFunction(), 1, state.getNumGhosts())
             if score > bestScore:
                 bestScore = score
                 bestAction = action
         return bestAction
     
-    def minimax(self, state, depth, payoffFunction, isMaximizing):
+    def minimax(self, state, depth, payoffFunction, agentIndex, numGhosts=2):
+        PACMAN_AGENT_INDEX = 0
         if state.isWin() or state.isLose() or depth == self.getTreeDepth():
             return payoffFunction(state)
         
-        if isMaximizing:
-            pass
+        if agentIndex == PACMAN_AGENT_INDEX:
+            legalMoves = state.getLegalActions(agentIndex)
+            bestScore = -1e9
+            for action in legalMoves:
+                successorState = state.generateSuccessor(agentIndex, action)
+                score = self.minimax(successorState, depth, payoffFunction, agentIndex + 1, numGhosts)
+                if score > bestScore:
+                    bestScore = score
+            return bestScore
+        elif agentIndex != numGhosts:
+            legalMoves = state.getLegalActions(agentIndex)
+            bestScore = 1e9
+            for action in legalMoves:
+                successorState = state.generateSuccessor(agentIndex, action)
+                score = self.minimax(successorState, depth, payoffFunction, agentIndex + 1, numGhosts)
+                if score < bestScore:
+                    bestScore = score
+            return bestScore
         else:
-            pass
-        return payoffFunction(state) 
+            legalMoves = state.getLegalActions(agentIndex)
+            bestScore = 1e9
+            for action in legalMoves:
+                successorState = state.generateSuccessor(agentIndex, action)
+                score = self.minimax(successorState, depth + 1, payoffFunction, 0, numGhosts)
+                if score < bestScore:
+                    bestScore = score
+            return bestScore
+        return None
 
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
@@ -149,6 +173,55 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
     def __init__(self, index, **kwargs):
         super().__init__(index, **kwargs)
+        
+    def getAction(self, state):
+        bestScore = -1e9
+        bestAction = None
+        legalMoves = state.getLegalActions(0)
+        for action in legalMoves:
+            successorState = state.generatePacmanSuccessor(action)
+            score = self.alphabeta(successorState, 1, self.getEvaluationFunction(), -1e9, 1e9, 1, state.getNumGhosts())
+            if score > bestScore:
+                bestScore, bestAction = score, action
+        return bestAction
+    
+    def alphabeta(self, state, depth, payoffFunction, alpha, beta, agentIndex, numGhosts=2):
+        if state.isWin() or state.isLose() or depth == self.getTreeDepth():
+            return payoffFunction(state)
+        if agentIndex == 0:
+            legalMoves = state.getLegalActions(agentIndex)
+            bestScore = -1e9
+            for action in legalMoves:
+                successorState = state.generateSuccessor(agentIndex, action)
+                score = self.alphabeta(successorState, depth, payoffFunction, alpha, beta, agentIndex + 1, numGhosts)
+                bestScore = max(bestScore, score)
+                alpha = max(bestScore, alpha)
+                if alpha >= beta:
+                    break
+            return bestScore
+        elif agentIndex != numGhosts:
+            legalMoves = state.getLegalActions(agentIndex)
+            bestScore = 1e9
+            for action in legalMoves:
+                successorState = state.generateSuccessor(agentIndex, action)
+                score = self.alphabeta(successorState, depth, payoffFunction, alpha, beta, agentIndex + 1, numGhosts)
+                bestScore = min(bestScore, score)
+                beta = min(bestScore, beta)
+                if alpha >= beta:
+                    break
+            return bestScore
+        else:
+            legalMoves = state.getLegalActions(agentIndex)
+            bestScore = 1e9
+            for action in legalMoves:
+                successorState = state.generateSuccessor(agentIndex, action)
+                score = self.alphabeta(successorState, depth + 1, payoffFunction, alpha, beta, 0, numGhosts)
+                bestScore = min(bestScore, score)
+                beta = min(bestScore, beta)
+                if alpha >= beta:
+                    break
+            return bestScore
+        return None
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
@@ -166,6 +239,47 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
 
     def __init__(self, index, **kwargs):
         super().__init__(index, **kwargs)
+    
+    def getAction(self, state):
+        bestScore = -1e9
+        bestAction = None
+        legalMoves = state.getLegalActions(0)
+        for action in legalMoves:
+            successorState = state.generatePacmanSuccessor(action)
+            score = self.expectimax(successorState, 1, self.getEvaluationFunction(), 1, state.getNumGhosts())
+            if score > bestScore:
+                bestScore, bestAction = score, action
+        return bestAction
+
+    def expectimax(self, state, depth, payoffFunction, agentIndex, numGhosts=2):
+        PACMAN_AGENT_INDEX = 0
+        if state.isWin() or state.isLose() or depth == self.getTreeDepth():
+            return payoffFunction(state)
+
+        if agentIndex == PACMAN_AGENT_INDEX:
+            legalMoves = state.getLegalActions(agentIndex)
+            bestScore = -1e9
+            for action in legalMoves:
+                successorState = state.generateSuccessor(agentIndex, action)
+                score = self.expectimax(successorState, depth, payoffFunction, agentIndex + 1, numGhosts)
+                if score > bestScore:
+                    bestScore = score
+            return bestScore
+        elif agentIndex != numGhosts:
+            legalMoves = state.getLegalActions(agentIndex)
+            totalScore = 0
+            for action in legalMoves:
+                successorState = state.generateSuccessor(agentIndex, action)
+                totalScore += self.expectimax(successorState, depth, payoffFunction, agentIndex + 1, numGhosts)
+            return totalScore / len(legalMoves)
+        else:
+            legalMoves = state.getLegalActions(agentIndex)
+            totalScore = 0
+            for action in legalMoves:
+                successorState = state.generateSuccessor(agentIndex, action)
+                totalScore += self.expectimax(successorState, depth + 1, payoffFunction, 0, numGhosts)
+            return totalScore / len(legalMoves)
+        return None
 
 def betterEvaluationFunction(currentGameState):
     """
@@ -173,8 +287,22 @@ def betterEvaluationFunction(currentGameState):
 
     DESCRIPTION: <write something here so we know what you did>
     """
-
-    return currentGameState.getScore()
+    currentFoods = currentGameState.getFood().asList()
+    currentGhostStates = currentGameState.getGhostStates()
+    currentPacmanPosition = currentGameState.getPacmanPosition()
+    dist2ClosestFood = 1e9
+    for food in currentFoods:
+        dist2ClosestFood = min(dist2ClosestFood, maze(food, currentPacmanPosition, currentGameState))
+        
+    SAFE_DISTANCE = 2
+    dist2ClosestGhost = 1e9
+    for ghost in currentGhostStates:
+        if ghost.isBraveGhost() or ghost._scaredTimer * 2 < SAFE_DISTANCE:
+            dist2ClosestGhost = min(dist2ClosestGhost, manhattan(currentPacmanPosition, ghost.getPosition()))
+    if dist2ClosestGhost < SAFE_DISTANCE:
+        dist2ClosestGhost = -1e9
+    
+    return currentGameState.getScore() + (1.0 / dist2ClosestFood) + dist2ClosestGhost
 
 class ContestAgent(MultiAgentSearchAgent):
     """
