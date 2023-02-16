@@ -65,7 +65,7 @@ class ReflexAgent(BaseAgent):
             newFoods = list(filter(lambda x: x != pacmanPosition, newFoods))
         for food in newFoods:
             # dist2ClosestFood = min(dist2ClosestFood, manhattan(food, pacmanPosition))
-            dist2ClosestFood = min(dist2ClosestFood, maze(food, pacmanPosition, successorGameState))
+            dist2ClosestFood = min(dist2ClosestFood, manhattan(food, pacmanPosition))
         dist2ClosestGhost = 1e9
         SAFE_DISTANCE = 2
         for ghost in newGhostStates:
@@ -306,16 +306,16 @@ def betterEvaluationFunction(currentGameState):
     for food in currentFoods:
         dist2ClosestFood = min(dist2ClosestFood,
                                maze(food, currentPacmanPosition, currentGameState))
-    SAFE_DISTANCE = 2
+    SAFE_DISTANCE = 3
     dist2ClosestGhost = 1e9
     for ghost in currentGhostStates:
         if ghost.isBraveGhost() or ghost._scaredTimer * 2 < SAFE_DISTANCE:
             dist2ClosestGhost = min(dist2ClosestGhost,
                                     manhattan(currentPacmanPosition, ghost.getPosition()))
     if dist2ClosestGhost < SAFE_DISTANCE:
-        dist2ClosestGhost = -1e9
+        dist2ClosestGhost = -1000
     else:
-        dist2ClosestGhost = 1e9
+        dist2ClosestGhost = 1000
     return currentGameState.getScore() + (1.0 / dist2ClosestFood) + dist2ClosestGhost
 
 class ContestAgent(MultiAgentSearchAgent):
