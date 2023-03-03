@@ -308,6 +308,7 @@ def betterEvaluationFunction(currentGameState):
                                maze(food, currentPacmanPosition, currentGameState))
     SAFE_DISTANCE = 3
     dist2ClosestGhost = 1e9
+    dist2ClosestScaryGhost = 1e9
     for ghost in currentGhostStates:
         if ghost.isBraveGhost() or ghost._scaredTimer * 2 < SAFE_DISTANCE:
             dist2ClosestGhost = min(dist2ClosestGhost,
@@ -315,8 +316,17 @@ def betterEvaluationFunction(currentGameState):
     if dist2ClosestGhost < SAFE_DISTANCE:
         dist2ClosestGhost = -1000
     else:
-        dist2ClosestGhost = 1000
-    return currentGameState.getScore() + (1.0 / dist2ClosestFood) + dist2ClosestGhost
+        dist2ClosestGhost = 0
+    for ghost in currentGhostStates:
+        if not ghost.isBraveGhost() or not ghost._scaredTimer * 2 < SAFE_DISTANCE:
+            dist2ClosestScaryGhost = min(dist2ClosestGhost,
+                                    manhattan(currentPacmanPosition, ghost.getPosition()))
+    if dist2ClosestScaryGhost < SAFE_DISTANCE:
+        dist2ClosestScaryGhost = 1000
+    else:
+        dist2ClosestScaryGhost = 0
+    return currentGameState.getScore() + (1.0 / dist2ClosestFood) \
+        + dist2ClosestGhost + dist2ClosestScaryGhost
 
 class ContestAgent(MultiAgentSearchAgent):
     """

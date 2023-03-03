@@ -164,5 +164,22 @@
             "console": "integratedTerminal",
             "justMyCode": true
         },
+        {
+            "name": "PROJ3-Q9-Evaluation",
+            "type": "python",
+            "request": "launch",
+            "program": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/pacai/bin/pacman.py",
+            "cwd": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/",
+            "env": { "PYTHONPATH": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/"},
+            "args": [
+                "-p",               "ApproximateQAgent",
+                "--num-training",   "200",
+                "--num-games",      "2010",
+                "--layout",         "smallGrid",
+
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
     ]
 }

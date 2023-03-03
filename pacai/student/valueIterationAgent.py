@@ -32,25 +32,45 @@ class ValueIterationAgent(ValueEstimationAgent):
 
     def __init__(self, index, mdp, discountRate = 0.9, iters = 100, **kwargs):
         super().__init__(index, **kwargs)
-
         self.mdp = mdp
         self.discountRate = discountRate
         self.iters = iters
         self.values = {}  # A dictionary which holds the q-values for each state.
-
         # Compute the values here.
-        raise NotImplementedError()
+        for i in range(self.iters):
+            tmp = {}
+            for state in self.mdp.getStates():
+                maxVal = -1e9
+                for action in self.mdp.getPossibleActions(state):
+                    maxVal = max(maxVal, self.getQValue(state, action))
+                tmp[state] = maxVal if maxVal != -1e9 else 0
+            self.values = tmp
 
     def getValue(self, state):
         """
         Return the value of the state (computed in __init__).
         """
-
         return self.values.get(state, 0.0)
 
     def getAction(self, state):
         """
         Returns the policy at the state (no exploration).
         """
-
         return self.getPolicy(state)
+
+    def getQValue(self, state, action):
+        qValue = 0
+        for transition in self.mdp.getTransitionStatesAndProbs(state, action):
+            qValue += transition[1] * (self.mdp.getReward(state, action, transition[0])
+                                       + self.discountRate * self.getValue(transition[0]))
+        return qValue
+
+    def getPolicy(self, state):
+        bestScore = -1e9
+        bestAction = None
+        for action in self.mdp.getPossibleActions(state):
+            qvalue = self.getQValue(state, action)
+            if qvalue > bestScore:
+                bestScore = qvalue
+                bestAction = action
+        return bestAction
