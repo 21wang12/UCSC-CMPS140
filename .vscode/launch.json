@@ -181,5 +181,19 @@
             "console": "integratedTerminal",
             "justMyCode": true
         },
+        {
+            "name": "PROJ4-Capture",
+            "type": "python",
+            "request": "launch",
+            "program": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/pacai/bin/capture.py",
+            "cwd": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/",
+            "env": { "PYTHONPATH": "/Users/wangshuo/wksp/UCSC-CMPS140/pacman/"},
+            "args": [
+                "--red",    "pacai.student.myTeam",
+                "--blue",   "pacai.core.baselineTeam",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
     ]
 }

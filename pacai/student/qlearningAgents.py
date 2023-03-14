@@ -119,7 +119,7 @@ class QLearningAgent(ReinforcementAgent):
         alpha = self.getAlpha()
         gamma = self.getDiscountRate()
         self.q_values[(state, action)] = (1 - alpha) * old_Q \
-            + alpha * (reward + gamma * self.getValue(nextState))
+                                        + alpha * (reward + gamma * self.getValue(nextState))
 
 class PacmanQAgent(QLearningAgent):
     """
