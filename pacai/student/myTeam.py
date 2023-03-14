@@ -28,6 +28,8 @@ def createTeam(firstIndex, secondIndex, isRed,
 class myOffensiveReflexAgent(ReflexCaptureAgent):
     def __init__(self, index, **kwargs):
         super().__init__(index)
+        self.safeDistance = 2
+        self.btwDistance = 3
 
     def getFeatures(self, gameState, action):
         features = {}
@@ -43,19 +45,25 @@ class myOffensiveReflexAgent(ReflexCaptureAgent):
             minDistance = min([self.getMazeDistance(myPos, food) for food in foodList])
             features['distanceToFood'] = minDistance
             
-        oppoentsGhostStates = [gameState.getAgentStates()[i] for i in self.getOpponents(gameState) 
-                              if gameState.isOnBlueSide(gameState.getAgentStates()[i].getPosition())]
-        oppoentsPacmanStates = [gameState.getAgentStates()[i] for i in self.getOpponents(gameState) 
-                              if gameState.isOnRedSide(gameState.getAgentStates()[i].getPosition())]
+        oppoentsGhostStates = [successor.getAgentStates()[i] for i in self.getOpponents(successor) 
+                              if successor.isOnBlueSide(successor.getAgentStates()[i].getPosition())]
+        oppoentsPacmanStates = [successor.getAgentStates()[i] for i in self.getOpponents(successor) 
+                              if successor.isOnRedSide(successor.getAgentStates()[i].getPosition())]
         
-        teamGhostStates = [gameState.getAgentStates()[i] for i in self.getTeam(gameState) 
-                              if gameState.isOnRedSide(gameState.getAgentStates()[i].getPosition())]
-        teamPacmanStates = [gameState.getAgentStates()[i] for i in self.getTeam(gameState) 
-                              if gameState.isOnBlueSide(gameState.getAgentStates()[i].getPosition())]
+        teamGhostStates = [successor.getAgentStates()[i] for i in self.getTeam(successor) 
+                              if successor.isOnRedSide(successor.getAgentStates()[i].getPosition())]
+        teamPacmanStates = [successor.getAgentStates()[i] for i in self.getTeam(successor) 
+                              if successor.isOnBlueSide(successor.getAgentStates()[i].getPosition())]
         if(len(oppoentsGhostStates) > 0):
             myPos = successor.getAgentState(self.index).getPosition()
-            minDistance = min([self.getMazeDistance(myPos, oppoentsGhostState.getPosition()) for oppoentsGhostState in oppoentsGhostStates])
-            features['distanceToGhost'] = minDistance
+            minDistance = min([self.getMazeDistance(myPos, oppoentsGhostState.getPosition()) for oppoentsGhostState in oppoentsGhostStates if not oppoentsGhostState.isScared()])
+            if minDistance <= self.safeDistance and successor.isOnBlueSide(successor.getAgentState(self.index).getPosition()):
+                features['distanceToOpponentGhost'] = minDistance
+        if(len(oppoentsPacmanStates) > 0):
+            myPos = successor.getAgentState(self.index).getPosition()
+            minDistance = min([self.getMazeDistance(myPos, oppoentsPacmanState.getPosition()) for oppoentsPacmanState in oppoentsPacmanStates])
+            if minDistance <= self.btwDistance:
+                features['distanceToOpponentPacman'] = minDistance
         
         return features
 
@@ -63,7 +71,8 @@ class myOffensiveReflexAgent(ReflexCaptureAgent):
         return {
             'successorScore': 100,
             'distanceToFood': -1,
-            'distanceToGhost': 0.1
+            'distanceToOpponentGhost': 2,
+            'distanceToOpponentPacman': -2,
         }
 
 class myDefensiveReflexAgent(ReflexCaptureAgent):
