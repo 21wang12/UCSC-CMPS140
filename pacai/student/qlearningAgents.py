@@ -45,7 +45,8 @@ class QLearningAgent(ReinforcementAgent):
     In Q learning, the pacman should explore the environment and learn the best policy.
     For each situation, the pacman should choose the best action to take.
     After each action, the pacman should update the Q value of the current state and action.
-    To avoid the pacman getting stuck in a local minimum, the pacman should explore the environment by taking random actions.
+    To avoid the pacman getting stuck in a local minimum, the pacman should explore the environment
+    by taking random actions.
     """
 
     def __init__(self, index, **kwargs):
@@ -118,8 +119,8 @@ class QLearningAgent(ReinforcementAgent):
         old_Q = self.getQValue(state, action)
         alpha = self.getAlpha()
         gamma = self.getDiscountRate()
-        self.q_values[(state, action)] = (1 - alpha) * old_Q \
-                                        + alpha * (reward + gamma * self.getValue(nextState))
+        self.q_values[(state, action)] = (1 - alpha) * old_Q +\
+            alpha * (reward + gamma * self.getValue(nextState))
 
 class PacmanQAgent(QLearningAgent):
     """
