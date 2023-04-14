@@ -49,15 +49,6 @@ class myOffensiveReflexAgent(ReflexCaptureAgent):
         currentOppoentsGhostStates = [currentGameState.getAgentStates()[i]
                                       for i in self.getOpponents(currentGameState)
                               if currentGameState.getAgentStates()[i].isGhost()]
-        # currentOppoentsPacmanStates = [currentGameState.getAgentStates()[i]
-        #                                for i in self.getOpponents(currentGameState)
-        #                       if currentGameState.isOnRedSide(
-        #                           currentGameState.getAgentStates()[i].getPosition())]
-
-        # successorOppoentsGhostStates = [successorGameState.getAgentStates()[i]
-        #                                 for i in self.getOpponents(successorGameState)
-        #                       if successorGameState.isOnBlueSide(
-        #                           currentGameState.getAgentStates()[i].getPosition())]
         successorOppoentsPacmanStates = [successorGameState.getAgentStates()[i]
                                          for i in self.getOpponents(successorGameState)
                               if successorGameState.getAgentStates()[i].isPacman()]
